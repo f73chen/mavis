@@ -5,6 +5,7 @@ workflow mavis {
     String donor
     Array[BamData] inputBAMs
     Array[SvData] svData
+    String docker = "g3chen/mavis:1.0"
   }
 
   String sanitized_donor = sub(donor, "_", ".")
@@ -29,7 +30,8 @@ workflow mavis {
       libTypes = bamLibraryDesigns,
       svData = svFiles,
       svWorkflows = workflowNames,
-      svLibDesigns = svLibraryDesigns
+      svLibDesigns = svLibraryDesigns,
+      docker = docker
   }
 
   meta {
@@ -52,6 +54,7 @@ workflow mavis {
     donor: "Donor id"
     inputBAMs: "Collection of alignment files with indexes and metadata"
     svData: "Collection of SV calls with metadata"
+    docker: "Docker container to run the workflow in"
   }
 
   output {
@@ -71,15 +74,23 @@ task runMavis {
     Array[String] libTypes
     Array[String] svWorkflows
     Array[String] svLibDesigns
-    String outputCONFIG = "mavis_config.cfg"
-    String scriptName = "mavis_config.sh"
+    # String outputCONFIG = "mavis_config.cfg"
+    File outputCONFIG = "mavis_config.cfg"
+    # String scriptName = "mavis_config.sh"
+    File scriptName = "mavis_config.sh"
     String donor
-    String referenceGenome
-    String annotations
-    String masking
-    String dvgAnnotations
-    String alignerReference
-    String templateMetadata
+    #String referenceGenome
+    File referenceGenome
+    #String annotations
+    File annotations
+    #String masking
+    File masking
+    #String dvgAnnotations
+    File dvgAnnotations
+    #String alignerReference
+    File alignerReference
+    #String templateMetadata
+    File templateMetadata
     String mavisAligner = "blat"
     String mavisScheduler = "SGE"
     String mavisDrawFusionOnly = "False"
@@ -94,6 +105,7 @@ task runMavis {
     Int jobMemory = 12
     Int sleepInterval = 20
     Int timeout = 24
+    String docker
   }
 
   parameter_meta {
@@ -126,6 +138,7 @@ task runMavis {
     jobMemory: "Memory allocated for this job"
     sleepInterval: "A pause after scheduling step, in seconds"
     timeout: "Timeout in hours, needed to override imposed limits"
+    docker: "Docker container to run the workflow in"
   }
 
   command <<<
@@ -223,6 +236,7 @@ task runMavis {
   >>>
 
   runtime {
+  	docker:  "~{docker}"
     memory:  "~{jobMemory} GB"
     modules: "~{modules}"
     timeout: "~{timeout}"
