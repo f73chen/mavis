@@ -1,0 +1,83 @@
+# python/3.6
+- name: python
+  version: 3.6
+  build_type: custom
+  build_args:
+    steps:
+    - build_type: autotools
+      build_args:
+       prereq_args:
+         prereq_args:
+           md5: 51aac91bdf8be95ec0a62d174890821a
+           url: https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tar.xz
+         prereq_type: download
+       prereq_type: extract
+       configure:
+        - --enable-shared
+        - --enable-ipv6
+        - --enable-loadable-sqlite-extensions
+        - --enable-optimizations
+        - --with-dbmliborder=bdb:gdbm
+        - --with-computed-gotos
+        - --with-ensurepip=yes
+        - --with-system-expat
+        - --with-system-libmpdec
+        - --with-system-ffi
+    - build_args: # YAML is included so that find-modules will work correctly in the built Python
+        package: PyYAML
+        version: 5.1.2
+      build_type: pip
+      scan_dirs: true
+    - build_args:
+        package: pip
+        version: 19.0.3
+      build_type: pip
+      scan_dirs: true
+    - command: [ "ln", "-s", "/usr/share/pyshared/lsb_release.py", "{output_dir}/lib/python3.6/lsb_release.py" ]
+  system_depends:
+  - name: libmpdec-dev
+  - name: libreadline-dev
+    permitted_os: ["Ubuntu18.04"]
+  - name: libreadline6-dev
+    permitted_os: ["Debian8.11"]
+  - name: libncurses5-dev
+  - name: libsqlite3-dev
+  - name: libssl-dev
+  - name: uuid-dev
+  - name: libffi-dev
+  - name: tk8.6-dev
+
+# blat/36
+- name: blat
+  version: 36
+  build_type: bioconda
+  build_args:
+    package: blat
+    version: 36
+  depends:
+    - name: conda
+      version: 4.6.14
+      required_at: build
+
+# mavis/2.2.6
+- name: mavis
+  version: 2.2.6
+  build_type: custom
+  build_args:
+    steps:
+      - build_type: pip
+        build_args:
+          package: mavis
+          version: 2.2.6
+      - command:
+        # remove unsupported mem_free and mem_token from mavis cluster scheduler args
+        - sed
+        - -i
+        - 's#mem_free={{0}}M,mem_token={{0}}M,##' # need to escape "{0}"
+        - "{output_dir}/lib/python3.6/site-packages/mavis/schedule/scheduler.py"
+  depends:
+    - name: python
+      version: 3.6
+    - name: blat
+      version: 36
+      required_at: soft_runtime
