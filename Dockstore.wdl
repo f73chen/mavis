@@ -74,10 +74,8 @@ task runMavis {
     Array[String] libTypes
     Array[String] svWorkflows
     Array[String] svLibDesigns
-    # String outputCONFIG = "mavis_config.cfg"
-    File outputCONFIG = "mavis_config.cfg"
-    # String scriptName = "mavis_config.sh"
-    File scriptName = "mavis_config.sh"
+    String outputCONFIG = "mavis_config.cfg"
+    String scriptName = "mavis_config.sh"
     String donor
     #String referenceGenome
     File referenceGenome
