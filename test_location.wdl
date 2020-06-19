@@ -4,40 +4,30 @@ workflow test_location {
 
 task find_tools {
     command {
-        ls $PICARD_ROOT
+        ls $MAVIS_ROOT
         echo "@@@@@@@@@@@@@@@@"
-        ls $JAVA_ROOT
+        ls $PYTHON_ROOT
         echo "@@@@@@@@@@@@@@@@"
-        ls $DELLY_ROOT
+        ls $BLAT_ROOT
         echo "@@@@@@@@@@@@@@@@"
-        ls $BCFTOOLS_ROOT
-        echo "@@@@@@@@@@@@@@@@"
-        ls $HTSLIB_ROOT
-        echo "@@@@@@@@@@@@@@@@"
-        ls $TABIX_ROOT
-        echo "@@@@@@@@@@@@@@@@"
-        ls $VCFTOOLS_ROOT
-        echo "@@@@@@@@@@@@@@@@"
-        ls $PERL_ROOT
+        ls $CONDA_ROOT
         echo "@@@@@@@@@@@@@@@@"
 
         echo $PATH
         echo "################"
-        echo $LD_LIBRARY_PATH
-        echo "################"
         echo $MANPATH
         echo "################"
+        echo $LD_LIBRARY_PATH
+        echo "################"
+        echo $PYTHONPATH
+        echo "################"
         echo $PKG_CONFIG_PATH
-        echo "################"
-        echo $LD_RUN_PATH
-        echo "################"
-        echo $PERL5LIB
         echo "################"
     }
     output{
         String message = read_string(stdout())
     }
     runtime {
-        docker: "g3chen/delly:1.0"
+        docker: "g3chen/mavis:1.0"
     }
 }
